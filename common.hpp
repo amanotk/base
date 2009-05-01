@@ -46,7 +46,7 @@ const std::ios::openmode text_read   = std::ios::in;
 //@}
 
 /// return elapsed time in second
-double etime()
+inline double etime()
 {
     struct timeval tv;
     gettimeofday(&tv, NULL);
