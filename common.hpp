@@ -13,6 +13,7 @@
 #include <cmath>
 #include <fstream>
 #include <vector>
+#include <sys/time.h>
 #include "boost/format.hpp"
 #include "config.hpp"
 
@@ -43,6 +44,14 @@ const std::ios::openmode text_write  = std::ios::out | std::ios::trunc;
 const std::ios::openmode text_append = std::ios::out | std::ios::app;
 const std::ios::openmode text_read   = std::ios::in;
 //@}
+
+/// return elapsed time in second
+double etime()
+{
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return tv.tv_sec + (double)tv.tv_usec*1.0e-6;
+}
 
 }
 
