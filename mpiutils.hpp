@@ -9,7 +9,9 @@
 ///
 /// $Id$
 ///
+#define MPICH_IGNORE_CXX_SEEK
 #include "common.hpp"
+#include <mpi.h>
 using namespace common;
 
 //
@@ -22,8 +24,6 @@ using namespace common;
 // Version 1.3.2 or below does not define MPI::INTEGER8 constant,
 // which is MPI 2 standard.
 //
-#include <mpi.h>
-
 #if OMPI_HAVE_FORTRAN_INTEGER8
 namespace MPI
 {
@@ -35,10 +35,9 @@ const Datatype INTEGER8 = MPI_INTEGER8;
 //
 // MPICH 2
 //
-// MPICH_IGNORE_CXX_SEEK is needed for use of MPI 2 standard.
+// MPICH_IGNORE_CXX_SEEK should be defined before including mpi.h
+// for use of MPI 2 standard.
 //
-#define MPICH_IGNORE_CXX_SEEK
-#include <mpi.h>
 
 #endif
 
