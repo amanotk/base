@@ -2,29 +2,60 @@
 #ifndef _MPIUTILS_HPP_
 #define _MPIUTILS_HPP_
 
-//
-// MPI utlility module for domain decomposition
-//
-// Author: Takanobu AMANO
-// $Id$
-//
-#define MPICH_IGNORE_CXX_SEEK
+///
+/// MPI utlility module for three dimensional domain decomposition
+///
+/// Author: Takanobu AMANO <amanot@stelab.nagoya-u.ac.jp>
+///
+/// $Id$
+///
 #include "common.hpp"
+using namespace common;
+
+//
+// configuration of MPI library
+//
+#if   defined (OPEN_MPI)
+//
+// Open MPI
+//
+// Version 1.3.2 or below does not define MPI::INTEGER8 constant,
+// which is MPI 2 standard.
+//
 #include <mpi.h>
 
-using namespace common;
+#if OMPI_HAVE_FORTRAN_INTEGER8
+namespace MPI
+{
+const Datatype INTEGER8 = MPI_INTEGER8;
+}
+#endif
+
+#elif defined (MPICH2)
+//
+// MPICH 2
+//
+// MPICH_IGNORE_CXX_SEEK is needed for use of MPI 2 standard.
+//
+#define MPICH_IGNORE_CXX_SEEK
+#include <mpi.h>
+
+#endif
 
 ///
 /// @class mpiutils mpiutils.hpp
-/// @brief Utility class for parallerization using MPI
+/// @brief utility class for domain decomposition using MPI
 ///
-/// This class provides a utlity routines for parallerized programs using
-/// MPI. Most of routines are static methods.
-/// - initialize() : call MPI::Init() and some other
-/// - finalize()   : call MPI::Finalize() and some other
-/// .
-/// std::cout, std::cerr are redirected to local files for each PE and
-/// concatenated to original buffer when finalize() is called.
+/// This class is an implementation of singleton that means it must have only
+/// one instance during execution. You should first initialize() and
+/// finalize() at last. These corresponds to MPI::Init() and MPI::Finalize()
+/// respectively, with some additional procedures.
+/// Methods implemented here are all static, meaning that you can use them
+/// like global functions.
+///
+/// Stream buffers std::cout and std::cerr are redirected to local files for
+/// each PEs and by default, these are concatenated to original buffer when
+/// finalize() is called.
 ///
 class mpiutils
 {
@@ -127,8 +158,8 @@ private:
 
     if( m_concat ) {
       // concatenate output stream
-      concatenate_stream(m_outf, std::cout, 0);
-      concatenate_stream(m_errf, std::cerr, 1);
+      concatenate_stream(m_outf, std::cout, 0, "stdout");
+      concatenate_stream(m_errf, std::cerr, 1, "stderr");
     }
 
     // finalize
@@ -140,7 +171,7 @@ private:
 
   /// concatenate sorted stream
   void concatenate_stream(std::string &filename, std::ostream &dst,
-                          const int tag)
+                          const int tag, const char *label)
   {
     MPI::Request r;
     int dummy = 0;
@@ -155,8 +186,9 @@ private:
 
     // output
     std::ofstream f(filename.c_str(), std::ios::in);
-    dst << boost::format("--- PE = %4d ---\n") % thisrank;
-    dst << f.rdbuf();
+    dst << boost::format("--- begin %s from PE =%4d ---\n") % label % thisrank;
+    if( f.rdbuf()->in_avail() != 0 ) dst << f.rdbuf();
+    dst << boost::format("--- end   %s from PE =%4d ---\n") % label % thisrank;
     dst.flush();
 
     // remove file
@@ -216,6 +248,14 @@ public:
     coord[0] = instance->m_coord[0];
     coord[1] = instance->m_coord[1];
     coord[2] = instance->m_coord[2];
+  }
+
+  /// get neighbors
+  static void getNeighbors(int neighbors[3][2])
+  {
+    for(int dir=0; dir < 3 ;dir++)
+      for(int i=0; i < 2 ;i++)
+        neighbors[dir][i] = instance->m_nb_dim[dir][i];
   }
 
   /// get wall clock time

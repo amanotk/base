@@ -5,7 +5,8 @@
 ///
 /// Common Module
 ///
-/// Author: Takanobu AMANO
+/// Author: Takanobu AMANO <amanot@stelab.nagoya-u.ac.jp>
+///
 /// $Id$
 ///
 #include <iostream>
