@@ -4,18 +4,21 @@
 INCLUDE_PATH=$(HOME)/usr/include
 
 # compilers
-CXX      = icpc
+CXX      = g++
 CXXFLAGS = -O3 -I$(INCLUDE_PATH)
 
 %.o : %.cpp
 	$(CXX) -c $(CXXFLAGS) $<
 
-default: TestConfig TestNArray TestMersenneTwister
+default: TestConfig TestNArray TestSArray TestMersenneTwister
 
 TestConfig: TestConfig.o
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 TestNArray: TestNArray.o
+	$(CXX) $(CXXFLAGS) $< -o $@
+
+TestSArray: TestSArray.o
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 TestMersenneTwister: TestMersenneTwister.o
@@ -25,5 +28,5 @@ clean:
 	rm -f *.o *.out
 
 cleanexe:
-	rm -f TestConfig TestNArray TestMersenneTwister
+	rm -f TestConfig TestNArray TestSArray TestMersenneTwister
 

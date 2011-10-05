@@ -46,13 +46,30 @@ const std::ios::openmode text_append = std::ios::out | std::ios::app;
 const std::ios::openmode text_read   = std::ios::in;
 //@}
 
+// common functions
+//@{
 /// return elapsed time in second
 inline double etime()
 {
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    return tv.tv_sec + (double)tv.tv_usec*1.0e-6;
+  struct timeval tv;
+  gettimeofday(&tv, NULL);
+  return tv.tv_sec + (double)tv.tv_usec*1.0e-6;
 }
+
+/// return maximum
+template <class T>
+inline T maximum(T a, T b)
+{
+  return (a > b) ? a : b;
+}
+
+/// return minimum
+template <class T>
+inline T minimum(T a, T b)
+{
+  return (a < b) ? a : b;
+}
+//@}
 
 }
 

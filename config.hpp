@@ -3,16 +3,16 @@
 #define _CONFIG_HPP_
 
 ///
-/// System dependent configuration.
+/// System Dependent Configuration
+///
 /// The data size for 'long' depends on your systems: might be 32bit on 32bit
 /// machines and 64bit on 64bit machines, but this may change, for example,
-/// according to compilers flags.
-/// C99 standard introduces a safe way to use 32bit and 64bit integers,
-/// however, some compilers do not provide a full C99 support. This dependency
-/// can be virtually removed by adding some configuration macros for your
-/// system. You should at least be able to use (u)int32_t, (u)int64_t and their
-/// correspoinding format macros. You may also define macros which may not be
-/// supported yet, i.e., 'inline' and 'restrict'.
+/// according to compilers flags. The C99 standard introduces a safe way to use
+/// 32bit and 64bit integers, however, some C++ compilers do not provide full
+/// C99 support. This dependency can be virtually removed by adding some
+/// configuration macros for your system. You should at least be able to use
+/// (u)int32_t, (u)int64_t and their correspoinding format macros. You may also
+/// define macros which may not be supported yet, i.e., 'inline' and 'restrict'.
 ///
 /// Author: Takanobu AMANO <amanot@stelab.nagoya-u.ac.jp>
 ///
