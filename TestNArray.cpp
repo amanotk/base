@@ -6,7 +6,7 @@
 ///
 /// This code demonstrates how to use NArray<T,Rank> object.
 ///
-/// Author: Takanobu AMANO
+/// Author: Takanobu AMANO <amanot@stelab.nagoya-u.ac.jp>
 /// $Id$
 ///
 #include "boost/format.hpp"

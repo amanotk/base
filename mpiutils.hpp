@@ -6,7 +6,6 @@
 /// MPI utlility module for three dimensional domain decomposition
 ///
 /// Author: Takanobu AMANO <amanot@stelab.nagoya-u.ac.jp>
-///
 /// $Id$
 ///
 #define MPICH_IGNORE_CXX_SEEK

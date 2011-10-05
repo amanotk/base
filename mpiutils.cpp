@@ -1,8 +1,9 @@
 // -*- C++ -*-
 
 ///
-/// implementation of mpiutils
+/// MPI utlility module for three dimensional domain decomposition
 ///
+/// Author: Takanobu AMANO <amanot@stelab.nagoya-u.ac.jp>
 /// $Id$
 ///
 #include "mpiutils.hpp"

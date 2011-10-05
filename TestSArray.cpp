@@ -6,7 +6,7 @@
 ///
 /// This code demonstrates how to use SArray?D object.
 ///
-/// $Author$
+/// Author: Takanobu AMANO <amanot@stelab.nagoya-u.ac.jp>
 /// $Id$
 ///
 #include "boost/format.hpp"

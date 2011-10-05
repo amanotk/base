@@ -15,7 +15,6 @@
 /// define macros which may not be supported yet, i.e., 'inline' and 'restrict'.
 ///
 /// Author: Takanobu AMANO <amanot@stelab.nagoya-u.ac.jp>
-///
 /// $Id$
 ///
 #include <iostream>

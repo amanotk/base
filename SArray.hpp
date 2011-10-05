@@ -5,7 +5,7 @@
 ///
 /// Multidimensional Static Array Container
 ///
-/// $Author$
+/// Author: Takanobu AMANO <amanot@stelab.nagoya-u.ac.jp>
 /// $Id$
 ///
 

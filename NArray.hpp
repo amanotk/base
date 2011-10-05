@@ -5,7 +5,7 @@
 ///
 /// Multidimensional Array Container
 ///
-/// Author: Takanobu AMANO
+/// Author: Takanobu AMANO <amanot@stelab.nagoya-u.ac.jp>
 /// $Id$
 ///
 #include "config.hpp"
