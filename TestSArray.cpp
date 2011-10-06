@@ -9,6 +9,7 @@
 /// Author: Takanobu AMANO <amanot@stelab.nagoya-u.ac.jp>
 /// $Id$
 ///
+#define __MAIN__
 #include "boost/format.hpp"
 #include "SArray.hpp"
 #include "MersenneTwister.hpp"
@@ -29,11 +30,18 @@ int main()
     const int N1 = 10;
     SArray1D<int,N1> a1;
 
+    cout << boost::format("\n"
+                          "*** Testing SArray1D ...\n"
+                          "    - ndim = %5d\n"
+                          "    - size = %5d\n"
+                          "    - dims = {%3d}\n"
+                          "    ===> ")
+      % a1.ndim % a1.size % a1.dims[0];
+
     for(int i1=0; i1 < N1 ;i1++) {
       a1.data[i1] = rand(0, 100);
     }
 
-    cout << "----- 1D Array -----" << endl;
     int *ptr = &a1.data[0];
     bool status = true;
     for(int i1=0; i1 < N1 ;i1++) {
@@ -41,9 +49,9 @@ int main()
         status = false;
     }
     if( status ) {
-      cout << "===> works fine !" << endl;
+      cout << "works fine !" << endl;
     } else {
-      cout << "===> does not work !" << endl;
+      cout << "does not work !" << endl;
     }
   }
 
@@ -52,13 +60,20 @@ int main()
     const int N2 = 5;
     SArray2D<int,N1,N2> a2;
 
+    cout << boost::format("\n"
+                          "*** Testing SArray2D ...\n"
+                          "    - ndim = %5d\n"
+                          "    - size = %5d\n"
+                          "    - dims = {%3d,%3d}\n"
+                          "    ===> ")
+      % a2.ndim % a2.size % a2.dims[0] % a2.dims[1];
+
     for(int i1=0; i1 < N1 ;i1++) {
       for(int i2=0; i2 < N2 ;i2++) {
         a2.data[i1][i2] = rand(0, 100);
       }
     }
 
-    cout << "----- 2D Array -----" << endl;
     int *ptr = &a2.data[0][0];
     bool status = true;
     for(int i1=0; i1 < N1; i1++) {
@@ -68,9 +83,9 @@ int main()
       }
     }
     if( status ) {
-      cout << "===> works fine !" << endl;
+      cout << "works fine !" << endl;
     } else {
-      cout << "===> does not work !" << endl;
+      cout << "does not work !" << endl;
     }
   }
 
@@ -80,6 +95,14 @@ int main()
     const int N3 = 4;
     SArray3D<int,N1,N2,N3> a3;
 
+    cout << boost::format("\n"
+                          "*** Testing SArray3D ...\n"
+                          "    - ndim = %5d\n"
+                          "    - size = %5d\n"
+                          "    - dims = {%3d,%3d,%3d}\n"
+                          "    ===> ")
+      % a3.ndim % a3.size % a3.dims[0] % a3.dims[1] % a3.dims[2];
+
     for(int i1=0; i1 < N1 ;i1++) {
       for(int i2=0; i2 < N2 ;i2++) {
         for(int i3=0; i3 < N3 ;i3++) {
@@ -88,7 +111,6 @@ int main()
       }
     }
 
-    cout << "----- 3D Array -----" << endl;
     int *ptr = &a3.data[0][0][0];
     bool status = true;
     for(int i1=0; i1 < N1; i1++) {
@@ -100,9 +122,9 @@ int main()
       }
     }
     if( status ) {
-      cout << "===> works fine !" << endl;
+      cout << "works fine !" << endl;
     } else {
-      cout << "===> does not work !" << endl;
+      cout << "does not work !" << endl;
     }
   }
 
@@ -112,6 +134,14 @@ int main()
     const int N3 = 4;
     const int N4 = 2;
     SArray4D<int,N1,N2,N3,N4> a4;
+
+    cout << boost::format("\n"
+                          "*** Testing SArray4D ...\n"
+                          "    - ndim = %5d\n"
+                          "    - size = %5d\n"
+                          "    - dims = {%3d,%3d,%3d,%3d}\n"
+                          "    ===> ")
+      % a4.ndim % a4.size % a4.dims[0] % a4.dims[1] % a4.dims[2] % a4.dims[3];
 
     for(int i1=0; i1 < N1 ;i1++) {
       for(int i2=0; i2 < N2 ;i2++) {
@@ -123,7 +153,6 @@ int main()
       }
     }
 
-    cout << "----- 4D Array -----" << endl;
     int *ptr = &a4.data[0][0][0][0];
     bool status = true;
     for(int i1=0; i1 < N1; i1++) {
@@ -137,9 +166,9 @@ int main()
       }
     }
     if( status ) {
-      cout << "===> works fine !" << endl;
+      cout << "works fine !" << endl;
     } else {
-      cout << "===> does not work !" << endl;
+      cout << "does not work !" << endl;
     }
   }
 
@@ -150,6 +179,15 @@ int main()
     const int N4 = 3;
     const int N5 = 4;
     SArray5D<int,N1,N2,N3,N4,N5> a5;
+
+    cout << boost::format("\n"
+                          "*** Testing SArray5D ...\n"
+                          "    - ndim = %5d\n"
+                          "    - size = %5d\n"
+                          "    - dims = {%3d,%3d,%3d,%3d,%3d}\n"
+                          "    ===> ")
+      % a5.ndim % a5.size % a5.dims[0] % a5.dims[1] % a5.dims[2] % a5.dims[3]
+      % a5.dims[4];
 
     for(int i1=0; i1 < N1 ;i1++) {
       for(int i2=0; i2 < N2 ;i2++) {
@@ -163,7 +201,6 @@ int main()
       }
     }
 
-    cout << "----- 5D Array -----" << endl;
     int *ptr = &a5.data[0][0][0][0][0];
     bool status = true;
     for(int i1=0; i1 < N1; i1++) {
@@ -180,9 +217,9 @@ int main()
       }
     }
     if( status ) {
-      cout << "===> works fine !" << endl;
+      cout << "works fine !" << endl;
     } else {
-      cout << "===> does not work !" << endl;
+      cout << "does not work !" << endl;
     }
   }
 
@@ -194,6 +231,15 @@ int main()
     const int N5 = 2;
     const int N6 = 3;
     SArray6D<int,N1,N2,N3,N4,N5,N6> a6;
+
+    cout << boost::format("\n"
+                          "*** Testing SArray6D ...\n"
+                          "    - ndim = %5d\n"
+                          "    - size = %5d\n"
+                          "    - dims = {%3d,%3d,%3d,%3d,%3d,%3d}\n"
+                          "    ===> ")
+      % a6.ndim % a6.size % a6.dims[0] % a6.dims[1] % a6.dims[2] % a6.dims[3]
+      % a6.dims[4] % a6.dims[5];
 
     for(int i1=0; i1 < N1 ;i1++) {
       for(int i2=0; i2 < N2 ;i2++) {
@@ -209,7 +255,6 @@ int main()
       }
     }
 
-    cout << "----- 6D Array -----" << endl;
     int *ptr = &a6.data[0][0][0][0][0][0];
     bool status = true;
     for(int i1=0; i1 < N1; i1++) {
@@ -228,9 +273,9 @@ int main()
       }
     }
     if( status ) {
-      cout << "===> works fine !" << endl;
+      cout << "works fine !" << endl;
     } else {
-      cout << "===> does not work !" << endl;
+      cout << "does not work !" << endl;
     }
   }
 

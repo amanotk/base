@@ -142,13 +142,13 @@ public:
 #ifdef __MAIN__
 template <class T, size_t N0, size_t N1, size_t N2, size_t N3, size_t N4,
           size_t N5>
-const size_t SArray5D<T,N0,N1,N2,N3,N4>::ndim = 6;
+const size_t SArray6D<T,N0,N1,N2,N3,N4,N5>::ndim = 6;
 template <class T, size_t N0, size_t N1, size_t N2, size_t N3, size_t N4,
           size_t N5>
-const size_t SArray5D<T,N0,N1,N2,N3,N4>::size = N0*N1*N2*N3*N4*N5;
+const size_t SArray6D<T,N0,N1,N2,N3,N4,N5>::size = N0*N1*N2*N3*N4*N5;
 template <class T, size_t N0, size_t N1, size_t N2, size_t N3, size_t N4,
           size_t N5>
-const size_t SArray5D<T,N0,N1,N2,N3,N4>::dims[] = {N0, N1, N2, N3, N4, N5};
+const size_t SArray6D<T,N0,N1,N2,N3,N4,N5>::dims[] = {N0, N1, N2, N3, N4, N5};
 #endif
 
 // Local Variables:

@@ -27,6 +27,6 @@ TestMersenneTwister: TestMersenneTwister.o
 clean:
 	rm -f *.o *.out
 
-cleanexe:
+cleanall: clean
 	rm -f TestConfig TestNArray TestSArray TestMersenneTwister
 
