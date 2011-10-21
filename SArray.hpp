@@ -21,6 +21,9 @@ public:
   static const size_t size;
   static const size_t dims[1];
   T data[N0];
+  T* ptr;
+
+  SArray1D() { ptr = &data[0]; }
 };
 
 #ifdef __MAIN__
@@ -44,6 +47,9 @@ public:
   static const size_t size;
   static const size_t dims[2];
   T data[N0][N1];
+  T* ptr;
+
+  SArray2D() { ptr = &data[0][0]; }
 };
 
 #ifdef __MAIN__
@@ -67,6 +73,9 @@ public:
   static const size_t size;
   static const size_t dims[3];
   T data[N0][N1][N2];
+  T* ptr;
+
+  SArray3D() { ptr = &data[0][0][0]; }
 };
 
 #ifdef __MAIN__
@@ -90,6 +99,9 @@ public:
   static const size_t size;
   static const size_t dims[4];
   T data[N0][N1][N2][N3];
+  T* ptr;
+
+  SArray4D() { ptr = &data[0][0][0][0]; }
 };
 
 #ifdef __MAIN__
@@ -113,6 +125,9 @@ public:
   static const size_t size;
   static const size_t dims[5];
   T data[N0][N1][N2][N3][N4];
+  T* ptr;
+
+  SArray5D() { ptr = &data[0][0][0][0][0]; }
 };
 
 #ifdef __MAIN__
@@ -137,6 +152,9 @@ public:
   static const size_t size;
   static const size_t dims[6];
   T data[N0][N1][N2][N3][N4][N5];
+  T* ptr;
+
+  SArray6D() { ptr = &data[0][0][0][0][0][0]; }
 };
 
 #ifdef __MAIN__
