@@ -68,6 +68,13 @@ inline T minimum(T a, T b)
 {
   return (a < b) ? a : b;
 }
+
+/// minmod limiter
+template <class T>
+inline T minmod(T a, T b)
+{
+  return 0.5*(copysign(1.0, a) + copysign(1.0, b)) * minimum(abs(a), abs(b));
+}
 //@}
 
 }
