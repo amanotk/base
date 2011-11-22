@@ -125,6 +125,9 @@ typedef uint64_t       uint64;
 typedef float          float32;
 typedef double         float64;
 
+// definition of default floating point numbers
+typedef float64        real;
+
 // Local Variables:
 // c-file-style   : "gnu"
 // c-file-offsets : ((innamespace . 0) (inline-open . 0))
