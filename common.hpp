@@ -15,6 +15,7 @@
 #include <vector>
 #include <sys/time.h>
 #include "boost/format.hpp"
+#include "boost/program_options.hpp"
 #include "config.hpp"
 
 namespace common
