@@ -5,18 +5,21 @@
 ///
 /// Common Module
 ///
-/// Author: Takanobu AMANO <amanot@stelab.nagoya-u.ac.jp>
+/// Author: Takanobu AMANO <amano@eps.s.u-tokyo.ac.jp>
 /// $Id$
 ///
 #include <iostream>
 #include <string>
+#include <cstdlib>
 #include <cmath>
 #include <fstream>
 #include <vector>
 #include <sys/time.h>
+#include "config.hpp"
+#ifdef HAS_BOOST
 #include "boost/format.hpp"
 #include "boost/program_options.hpp"
-#include "config.hpp"
+#endif
 
 namespace common
 {
@@ -39,6 +42,9 @@ const std::ios::openmode binary_append =
   std::ios::binary | std::ios::out | std::ios::app;
 const std::ios::openmode binary_read =
   std::ios::binary | std::ios::in;
+
+// endian flag
+const int32 endian = 1;
 
 // text mode
 const std::ios::openmode text_write  = std::ios::out | std::ios::trunc;

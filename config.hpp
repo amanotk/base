@@ -14,7 +14,7 @@
 /// (u)int32_t, (u)int64_t and their correspoinding format macros. You may also
 /// define macros which may not be supported yet, i.e., 'inline' and 'restrict'.
 ///
-/// Author: Takanobu AMANO <amanot@stelab.nagoya-u.ac.jp>
+/// Author: Takanobu AMANO <amano@eps.s.u-tokyo.ac.jp>
 /// $Id$
 ///
 #include <iostream>

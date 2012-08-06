@@ -5,7 +5,7 @@
 ///
 /// Random Number Generator
 ///
-/// Author: Takanobu AMANO <amanot@stelab.nagoya-u.ac.jp>
+/// Author: Takanobu AMANO <amano@eps.s.u-tokyo.ac.jp>
 /// $Id$
 ///
 #include <iostream>
