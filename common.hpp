@@ -51,6 +51,11 @@ const int32 endian = 1;
 const std::ios::openmode text_write  = std::ios::out | std::ios::trunc;
 const std::ios::openmode text_append = std::ios::out | std::ios::app;
 const std::ios::openmode text_read   = std::ios::in;
+
+// null stream
+static struct NullStream : std::ostream {
+  NullStream() : std::ios(0), std::ostream(0) {}
+} nullstream;
 //@}
 
 // common functions
