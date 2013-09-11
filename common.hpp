@@ -16,6 +16,7 @@
 #include <vector>
 #include <sys/time.h>
 #include "config.hpp"
+#include "tinyformat.h"
 #ifdef HAS_BOOST
 #include "boost/format.hpp"
 #include "boost/program_options.hpp"
@@ -60,6 +61,13 @@ inline double etime()
   struct timeval tv;
   gettimeofday(&tv, NULL);
   return tv.tv_sec + (double)tv.tv_usec*1.0e-6;
+}
+
+/// return absolute value
+template <class T>
+inline T absolute(T x)
+{
+  return (x > 0) ? x : -x;
 }
 
 /// return maximum
