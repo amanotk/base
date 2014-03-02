@@ -9,6 +9,42 @@
 /// $Id$
 ///
 
+template <class T_array, class T_shape>
+void debug_write(const char* filename, int dsize, T_array &array,
+                 T_shape lbound, T_shape ubound)
+{
+  std::ofstream fp(filename, common::binary_append);
+
+  switch(array.rank()) {
+  case 1: // 1D
+    for(int i0=lbound[0]; i0 <= ubound[0] ;i0++) {
+      fp.write(reinterpret_cast<const char*>(&array(i0)), dsize);
+    }
+    break;
+  case 2: // 2D
+    for(int i0=lbound[0]; i0 <= ubound[0] ;i0++) {
+      for(int i1=lbound[1]; i1 <= ubound[1] ;i1++) {
+        fp.write(reinterpret_cast<const char*>(&array(i0,i1)), dsize);
+      }
+    }
+    break;
+  case 3: // 3D
+    for(int i0=lbound[0]; i0 <= ubound[0] ;i0++) {
+      for(int i1=lbound[1]; i1 <= ubound[1] ;i1++) {
+        for(int i2=lbound[2]; i2 <= ubound[2] ;i2++) {
+          fp.write(reinterpret_cast<const char*>(&array(i0,i1,i2)), dsize);
+        }
+      }
+    }
+    break;
+  default:
+    fprintf(stderr, "unable to handle a given dimension\n");
+  }
+
+  fp.flush();
+  fp.close();
+}
+
 template <class T>
 void debug_write_array_data(std::ofstream &ofs, T* ptr, size_t size)
 {
