@@ -27,8 +27,8 @@ private:
   {
     static const int max_num_match = 5;
     static const char pattern[] =
-      "[[:space:]]*([A-Za-z0-9_\\.]+)[[:space:]]*="
-      "[[:space:]]*([A-Za-z0-9_\\.]+)[[:space:]]*";
+      "[[:space:]]*([A-Za-z0-9_\\.\\+\\-]+)[[:space:]]*="
+      "[[:space:]]*([A-Za-z0-9_\\.\\+\\-]+)[[:space:]]*";
 
     int status;
     std::string line;
@@ -73,7 +73,7 @@ private:
     // insert into m_pair
     std::string key = str.substr(match[1].rm_so, match[1].rm_eo);
     std::string val = str.substr(match[2].rm_so, match[2].rm_eo);
-    m_pair.insert(std::map<std::string, std::string>::value_type(key, val));
+    m_pair.insert(std::make_pair(key, val));
   }
 
   // template declaration
