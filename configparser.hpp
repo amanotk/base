@@ -71,9 +71,18 @@ private:
     }
 
     // insert into m_pair
-    std::string key = str.substr(match[1].rm_so, match[1].rm_eo);
-    std::string val = str.substr(match[2].rm_so, match[2].rm_eo);
+    std::string key = trim(str.substr(match[1].rm_so, match[1].rm_eo));
+    std::string val = trim(str.substr(match[2].rm_so, match[2].rm_eo));
     m_pair.insert(std::make_pair(key, val));
+  }
+
+  // trim white space
+  std::string trim(std::string str)
+  {
+    std::string::size_type first = str.find_first_not_of(" ");
+    std::string::size_type last  = str.find_last_not_of (" ");
+
+    return str.substr(first, last+1);
   }
 
   // template declaration
