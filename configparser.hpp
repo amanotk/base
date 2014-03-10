@@ -36,6 +36,10 @@ private:
     // open file
     std::ifstream ifs(filename);
 
+    if( !ifs ) {
+      std::cerr << "Error: Could not open file : " << filename << std::endl;
+    }
+
     // prepare for regex match
     regex_t buf;
     regmatch_t match[max_num_match];
@@ -51,6 +55,9 @@ private:
       line = discard_comment(line);
       parse_line(line, &buf, match, max_num_match);
     }
+
+    // close
+    ifs.close();
   }
 
   // discard comment (after "#" for each line)
