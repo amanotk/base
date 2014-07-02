@@ -8,6 +8,43 @@
 ///
 /// $Id$
 ///
+#include <blitz/array.h>
+
+///
+/// write blitz++ array
+///
+template <class T_array>
+void debug_write(const char* filename, T_array &array, bool append=true)
+{
+  std::ios::openmode mode;
+  if( append ) {
+    mode = common::binary_append;
+  } else {
+    mode = common::binary_write;
+  }
+
+  std::ofstream fp(filename, mode);
+
+  // write rank
+  int rank = array.rank();
+  fp.write(reinterpret_cast<const char*>(&rank), sizeof(int));
+
+  // write array shape
+  for(int r=0; r < rank ;r++) {
+    int ext = array.extent(r);
+    fp.write(reinterpret_cast<const char*>(&ext), sizeof(int));
+  }
+
+  // dump data content
+  {
+    typename T_array::T_numtype *ptr = array.data();
+
+    fp.write(reinterpret_cast<const char*>(ptr), sizeof(*ptr)*array.size());
+  }
+
+  fp.flush();
+  fp.close();
+}
 
 template <class T_array, class T_shape>
 void debug_write(const char* filename, int dsize, T_array &array,

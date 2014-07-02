@@ -32,6 +32,7 @@ const float64 pi2 = 2*M_PI; ///< 2 pi
 const float64 pi4 = 4*M_PI; ///< 4 pi
 
 // utility constants
+const float64 HUGEVAL   = HUGE_VAL;
 const float64 TOLERANCE = 1.0e-08; ///< default tolerance
 const float64 EPSILON   = 1.0e-15; ///< machine epsilon
 const float64 NORMMIN   = 1.0e-12; ///< minimum norm (for matrix solvers)
