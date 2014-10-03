@@ -106,6 +106,11 @@ public:
   template <class T>
   T getAs(const char* key)
   {
+    if( m_pair.find(key) == m_pair.end() ) {
+      std::cerr << "Error: cannot find key : " << key << std::endl;
+      exit(-1);
+    }
+
     return type_cast<T>(m_pair[key]);
   }
 
