@@ -106,7 +106,7 @@ public:
   template <class T>
   T getAs(const char* key)
   {
-    if( m_pair.find(key) == m_pair.end() ) {
+    if( m_pair.find(std::string(key)) == m_pair.end() ) {
       std::cerr << "Error: cannot find key : " << key << std::endl;
       exit(-1);
     }
