@@ -27,8 +27,8 @@ private:
   {
     static const int max_num_match = 5;
     static const char pattern[] =
-      "[[:space:]]*([A-Za-z0-9_\\.\\+\\-]+)[[:space:]]*="
-      "[[:space:]]*([A-Za-z0-9_\\.\\+\\-]+)[[:space:]]*";
+      "[[:space:]]*([A-Za-z0-9_/\\.\\+\\-]+)[[:space:]]*="
+      "[[:space:]]*([A-Za-z0-9_/\\.\\+\\-]+)[[:space:]]*";
 
     int status;
     std::string line;
