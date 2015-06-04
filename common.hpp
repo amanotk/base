@@ -14,6 +14,7 @@
 #include <cmath>
 #include <fstream>
 #include <vector>
+#include <list>
 #include <cassert>
 #include <sys/time.h>
 #include "config.hpp"
