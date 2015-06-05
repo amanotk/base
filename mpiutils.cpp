@@ -111,8 +111,8 @@ void mpiutils::wait(MPI::Request req[], int n)
   // check status
   for(int i=0; i < n ;i++) {
     if( req[i].Test(status[i]) != true ) {
-      std::cerr << boost::format("MPI request[%2d] from rank %3d failed !\n")
-        % i % instance->m_thisrank;
+      std::cerr << tfm::format("MPI request[%2d] from rank %3d failed !\n",
+                               i, instance->m_thisrank);
     }
   }
 }
@@ -158,14 +158,14 @@ int main(int argc, char **argv)
 
     // show results
     std::cerr << "--- results of directional send/recv ---" << std::endl;
-    std::cerr << boost::format("send lower => [%2d,%2d,%2d]\n"
-                               "send upper => [%2d,%2d,%2d]\n")
-      % buf[0*N+0] % buf[0*N+1] % buf[0*N+2]
-      % buf[1*N+0] % buf[1*N+1] % buf[1*N+2];
-    std::cerr << boost::format("recv lower => [%2d,%2d,%2d]\n"
-                               "recv upper => [%2d,%2d,%2d]\n")
-      % buf[2*N+0] % buf[2*N+1] % buf[2*N+2]
-      % buf[3*N+0] % buf[3*N+1] % buf[3*N+2];
+    std::cerr << tfm::format("send lower => [%2d,%2d,%2d]\n"
+                             "send upper => [%2d,%2d,%2d]\n",
+                             buf[0*N+0], buf[0*N+1], buf[0*N+2],
+                             buf[1*N+0], buf[1*N+1], buf[1*N+2]);
+    std::cerr << tfm::format("recv lower => [%2d,%2d,%2d]\n"
+                             "recv upper => [%2d,%2d,%2d]\n",
+                             buf[2*N+0], buf[2*N+1], buf[2*N+2],
+                             buf[3*N+0], buf[3*N+1], buf[3*N+2]);
   }
 
   // test package send/recv
@@ -197,32 +197,32 @@ int main(int argc, char **argv)
 
     // show results
     std::cerr << "--- results of send/recv in dir. 0 ---" << std::endl;
-    std::cerr << boost::format("send lower => [%2d,%2d,%2d]\n"
-                               "send upper => [%2d,%2d,%2d]\n")
-      % buf0[0*N0+0] % buf0[0*N0+1] % buf0[0*N0+2]
-      % buf0[1*N0+0] % buf0[1*N0+1] % buf0[1*N0+2];
-    std::cerr << boost::format("recv lower => [%2d,%2d,%2d]\n"
-                               "recv upper => [%2d,%2d,%2d]\n")
-      % buf0[2*N0+0] % buf0[2*N0+1] % buf0[2*N0+2]
-      % buf0[3*N0+0] % buf0[3*N0+1] % buf0[3*N0+2];
+    std::cerr << tfm::format("send lower => [%2d,%2d,%2d]\n"
+                             "send upper => [%2d,%2d,%2d]\n",
+                             buf0[0*N0+0], buf0[0*N0+1], buf0[0*N0+2],
+                             buf0[1*N0+0], buf0[1*N0+1], buf0[1*N0+2]);
+    std::cerr << tfm::format("recv lower => [%2d,%2d,%2d]\n"
+                             "recv upper => [%2d,%2d,%2d]\n",
+                             buf0[2*N0+0], buf0[2*N0+1], buf0[2*N0+2],
+                             buf0[3*N0+0], buf0[3*N0+1], buf0[3*N0+2]);
     std::cerr << "--- results of send/recv in dir. 1 ---" << std::endl;
-    std::cerr << boost::format("send lower => [%2d,%2d,%2d]\n"
-                               "send upper => [%2d,%2d,%2d]\n")
-      % buf1[0*N1+0] % buf1[0*N1+1] % buf1[0*N1+2]
-      % buf1[1*N1+0] % buf1[1*N1+1] % buf1[1*N1+2];
-    std::cerr << boost::format("recv lower => [%2d,%2d,%2d]\n"
-                               "recv upper => [%2d,%2d,%2d]\n")
-      % buf1[2*N1+0] % buf1[2*N1+1] % buf1[2*N1+2]
-      % buf1[3*N1+0] % buf1[3*N1+1] % buf1[3*N1+2];
+    std::cerr << tfm::format("send lower => [%2d,%2d,%2d]\n"
+                             "send upper => [%2d,%2d,%2d]\n",
+                             buf1[0*N1+0], buf1[0*N1+1], buf1[0*N1+2],
+                             buf1[1*N1+0], buf1[1*N1+1], buf1[1*N1+2]);
+    std::cerr << tfm::format("recv lower => [%2d,%2d,%2d]\n"
+                             "recv upper => [%2d,%2d,%2d]\n",
+                             buf1[2*N1+0], buf1[2*N1+1], buf1[2*N1+2],
+                             buf1[3*N1+0], buf1[3*N1+1], buf1[3*N1+2]);
     std::cerr << "--- results of send/recv in dir. 2 ---" << std::endl;
-    std::cerr << boost::format("send lower => [%2d,%2d,%2d]\n"
-                               "send upper => [%2d,%2d,%2d]\n")
-      % buf2[0*N2+0] % buf2[0*N2+1] % buf2[0*N2+2]
-      % buf2[1*N2+0] % buf2[1*N2+1] % buf2[1*N2+2];
-    std::cerr << boost::format("recv lower => [%2d,%2d,%2d]\n"
-                               "recv upper => [%2d,%2d,%2d]\n")
-      % buf2[2*N2+0] % buf2[2*N2+1] % buf2[2*N2+2]
-      % buf2[3*N2+0] % buf2[3*N2+1] % buf2[3*N2+2];
+    std::cerr << tfm::format("send lower => [%2d,%2d,%2d]\n"
+                             "send upper => [%2d,%2d,%2d]\n",
+                             buf2[0*N2+0], buf2[0*N2+1], buf2[0*N2+2],
+                             buf2[1*N2+0], buf2[1*N2+1], buf2[1*N2+2]);
+    std::cerr << tfm::format("recv lower => [%2d,%2d,%2d]\n"
+                             "recv upper => [%2d,%2d,%2d]\n",
+                             buf2[2*N2+0], buf2[2*N2+1], buf2[2*N2+2],
+                             buf2[3*N2+0], buf2[3*N2+1], buf2[3*N2+2]);
   }
 
   // finalize

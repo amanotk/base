@@ -5,7 +5,7 @@
 ///
 /// MPI utlility module for three dimensional domain decomposition
 ///
-/// Author: Takanobu AMANO <amanot@stelab.nagoya-u.ac.jp>
+/// Author: Takanobu AMANO <amano@eps.s.u-tokyo.ac.jp>
 /// $Id$
 ///
 #define MPICH_IGNORE_CXX_SEEK
@@ -101,11 +101,11 @@ private:
     if( domain[0]*domain[1]*domain[2] != m_nprocess ) {
       if( m_thisrank == 0 ) {
         std::cerr <<
-          boost::format("Error in mpiutils: invalid number of PEs (=%4d)\n"
-                        "current domain decomposition = "
-                        "[%3d, %3d, %3d] ===> expected PEs = %4d\n")
-          % m_nprocess % domain[0] % domain[1] % domain[2]
-          % (domain[0]*domain[1]*domain[2]);
+          tfm::format("Error in mpiutils: invalid number of PEs (=%4d)\n"
+                      "current domain decomposition = "
+                      "[%3d, %3d, %3d] ===> expected PEs = %4d\n",
+                      m_nprocess, domain[0], domain[1], domain[2],
+                      (domain[0]*domain[1]*domain[2]));
       }
       // exit with error
       MPI::Finalize();
@@ -129,12 +129,12 @@ private:
     }
 
     // open dummy standard error stream
-    m_errf   = (boost::format("%s_PE%04d.stderr") % argv[0] % m_thisrank).str();
+    m_errf   = tfm::format("%s_PE%04d.stderr", argv[0], m_thisrank);
     m_err    = new std::ofstream(m_errf.c_str());
     m_errbuf = std::cerr.rdbuf(m_err->rdbuf());
 
     // open dummy standard output stream
-    m_outf   = (boost::format("%s_PE%04d.stdout") % argv[0] % m_thisrank).str();
+    m_outf   = tfm::format("%s_PE%04d.stdout", argv[0], m_thisrank);
     m_out    = new std::ofstream(m_outf.c_str());
     m_outbuf = std::cout.rdbuf(m_out->rdbuf());
   }
@@ -184,9 +184,9 @@ private:
 
     // output
     std::ofstream f(filename.c_str(), std::ios::in);
-    dst << boost::format("--- begin %s from PE =%4d ---\n") % label % thisrank;
+    dst << tfm::format("--- begin %s from PE =%4d ---\n", label, thisrank);
     if( f.rdbuf()->in_avail() != 0 ) dst << f.rdbuf();
-    dst << boost::format("--- end   %s from PE =%4d ---\n") % label % thisrank;
+    dst << tfm::format("--- end   %s from PE =%4d ---\n", label, thisrank);
     dst.flush();
 
     // remove file
@@ -266,31 +266,31 @@ public:
   static std::string getFilename(std::string prefix, std::string ext)
   {
     std::string filename =
-      ( boost::format("%s-%02d-%02d-%02d.%s")
-        % prefix
-        % instance->m_rank_dim[0]
-        % instance->m_rank_dim[1]
-        % instance->m_rank_dim[2]
-        % ext ).str();
+      tfm::format("%s-%03d-%03d-%03d.%s",
+                  prefix,
+                  instance->m_rank_dim[0],
+                  instance->m_rank_dim[1],
+                  instance->m_rank_dim[2],
+                  ext);
     return filename;
   }
 
   /// show debugging information
   static void info(std::ostream &out)
   {
-    out << boost::format("\n"
-                         " <<< INFO: mpiutils >>>"
-                         "\n"
-                         "Number of Process   : %4d\n"
-                         "This Rank           : %4d\n"
-                         "Temporary std::cout : %s\n"
-                         "Temporary std::cerr : %s\n")
-      % instance->m_nprocess
-      % instance->m_thisrank
-      % instance->m_outf.c_str()
-      % instance->m_errf.c_str();
+    out << tfm::format("\n"
+                       " <<< INFO: mpiutils >>>"
+                       "\n"
+                       "Number of Process   : %4d\n"
+                       "This Rank           : %4d\n"
+                       "Temporary std::cout : %s\n"
+                       "Temporary std::cerr : %s\n",
+                       instance->m_nprocess,
+                       instance->m_thisrank,
+                       instance->m_outf.c_str(),
+                       instance->m_errf.c_str());
 
-    out << boost::format("Info for domain decomposition:\n").str();
+    out << "Info for domain decomposition:\n";
     for(int dir=0; dir < 3 ; dir++) {
       int cl[3], cc[3], cu[3];
       // self
@@ -307,12 +307,12 @@ public:
       } else {
         cu[0] = cu[1] = cu[2] = -1;
       }
-      out << boost::format(" neighbor in dir %1d: "
-                           "[%2d,%2d,%2d] <= [%2d,%2d,%2d] => [%2d,%2d,%2d]\n")
-        % dir
-        % cl[0] % cl[1] % cl[2]
-        % cc[0] % cc[1] % cc[2]
-        % cu[0] % cu[1] % cu[2];
+      out << tfm::format(" neighbor in dir %1d: "
+                         "[%2d,%2d,%2d] <= [%2d,%2d,%2d] => [%2d,%2d,%2d]\n",
+                         dir,
+                         cl[0], cl[1], cl[2],
+                         cc[0], cc[1], cc[2],
+                         cu[0], cu[1], cu[2]);
     }
     out << std::endl;
   }
