@@ -44,12 +44,12 @@ const Datatype INTEGER8 = MPI_INTEGER8;
 /// @class mpiutils mpiutils.hpp
 /// @brief utility class for domain decomposition using MPI
 ///
-/// This class is an implementation of singleton that means it must have only
-/// one instance during execution. You should first initialize() and
-/// finalize() at last. These corresponds to MPI::Init() and MPI::Finalize()
-/// respectively, with some additional procedures.
-/// Methods implemented here are all static, meaning that you can use them
-/// like global functions.
+/// This class is an implementation of singleton, having only one instance
+/// during execution of a program. You should first initialize() before any MPI
+/// calls and finalize() at the end. These corresponds to MPI_Init() and
+/// MPI_Finalize() respectively, with some additional procedures. Methods
+/// implemented here are all static, meaning that you can use them like global
+/// functions.
 ///
 /// Stream buffers std::cout and std::cerr are redirected to local files for
 /// each PEs and by default, these are concatenated to original buffer when
@@ -62,7 +62,7 @@ private:
   static int tag[3][2];      ///< tag for MPI communications
 
   // cartesian topology communicator
-  MPI::Cartcomm m_cart;
+  MPI_Comm m_cart;
 
   // process, rank and neighbors
   int m_nprocess;         ///< number of process
@@ -87,14 +87,14 @@ private:
   mpiutils& operator=(const mpiutils &);
 
   /// constructor
-  mpiutils(int argc, char** argv,
-           int domain[3], bool period[3], bool concat)
+  mpiutils(int *argc, char*** argv,
+           int domain[3], int period[3], bool concat)
   {
     // initialize
-    MPI::Init(argc, argv);
+    MPI_Init(argc, argv);
 
-    m_nprocess = MPI::COMM_WORLD.Get_size();
-    m_thisrank = MPI::COMM_WORLD.Get_rank();
+    MPI_Comm_size(MPI_COMM_WORLD, &m_nprocess);
+    MPI_Comm_rank(MPI_COMM_WORLD, &m_thisrank);
     m_concat   = concat;
 
     // check consistency between argument and nprocess
@@ -108,7 +108,7 @@ private:
                       (domain[0]*domain[1]*domain[2]));
       }
       // exit with error
-      MPI::Finalize();
+      MPI_Finalize();
       exit(-1);
     }
 
@@ -118,14 +118,14 @@ private:
       m_proc_dim[1] = domain[1];
       m_proc_dim[2] = domain[2];
       // cartesian topology
-      m_cart = MPI::COMM_WORLD.Create_cart(3, domain, period, 0);
-      m_cart.Get_topo(3, domain, period, m_rank_dim);
+      MPI_Cart_create(MPI_COMM_WORLD, 3, domain, period, 0, &m_cart);
+      MPI_Cart_get(m_cart, 3, domain, period, m_rank_dim);
       // set neighbors
-      m_cart.Shift(0, +1, m_nb_dim[0][0], m_nb_dim[0][1]);
-      m_cart.Shift(1, +1, m_nb_dim[1][0], m_nb_dim[1][1]);
-      m_cart.Shift(2, +1, m_nb_dim[2][0], m_nb_dim[2][1]);
+      MPI_Cart_shift(m_cart, 0, +1, &m_nb_dim[0][0], &m_nb_dim[0][1]);
+      MPI_Cart_shift(m_cart, 1, +1, &m_nb_dim[1][0], &m_nb_dim[1][1]);
+      MPI_Cart_shift(m_cart, 2, +1, &m_nb_dim[2][0], &m_nb_dim[2][1]);
       // coordinate
-      m_cart.Get_coords(m_thisrank, 3, m_coord);
+      MPI_Cart_coords(m_cart, m_thisrank, 3, m_coord);
     }
 
     // open dummy standard error stream
@@ -161,7 +161,7 @@ private:
     }
 
     // finalize
-    MPI::Finalize();
+    MPI_Finalize();
 
     // set null
     instance = 0;
@@ -171,15 +171,15 @@ private:
   void concatenate_stream(std::string &filename, std::ostream &dst,
                           const int tag, const char *label)
   {
-    MPI::Request r;
+    MPI_Request r;
     int dummy = 0;
     int nprocess = instance->m_nprocess;
     int thisrank = instance->m_thisrank;
 
     // recieve from the previous
     if( thisrank > 0 ) {
-      r = MPI::COMM_WORLD.Irecv(&dummy, 1, MPI::INTEGER4, thisrank-1, tag);
-      r.Wait();
+      MPI_Irecv(&dummy, 1, MPI_INT, thisrank-1, tag, MPI_COMM_WORLD, &r);
+      MPI_Wait(&r, MPI_STATUS_IGNORE);
     }
 
     // output
@@ -194,13 +194,13 @@ private:
 
     // send to the next
     if( thisrank == nprocess-1 ) return;
-    MPI::COMM_WORLD.Isend(&dummy, 1, MPI::INTEGER4, thisrank+1, tag);
+    MPI_Isend(&dummy, 1, MPI_INT, thisrank+1, tag, MPI_COMM_WORLD, &r);
   }
 
 public:
   /// initialize MPI call
-  static mpiutils* initialize(int argc, char** argv,
-                              int domain[3], bool period[3],
+  static mpiutils* initialize(int *argc, char*** argv,
+                              int domain[3], int period[3],
                               bool concat=true)
   {
     if( instance == 0 ) {
@@ -259,7 +259,7 @@ public:
   /// get wall clock time
   static double getTime()
   {
-    return MPI::Wtime();
+    return MPI_Wtime();
   }
 
   /// get filename with PE identifier
@@ -294,16 +294,16 @@ public:
     for(int dir=0; dir < 3 ; dir++) {
       int cl[3], cc[3], cu[3];
       // self
-      instance->m_cart.Get_coords(instance->m_thisrank, 3, cc);
+      MPI_Cart_coords(instance->m_cart, instance->m_thisrank, 3, cc);
       // lower
-      if ( instance->m_nb_dim[dir][0] != MPI::PROC_NULL ) {
-        instance->m_cart.Get_coords(instance->m_nb_dim[dir][0], 3, cl);
+      if ( instance->m_nb_dim[dir][0] != MPI_PROC_NULL ) {
+        MPI_Cart_coords(instance->m_cart, instance->m_nb_dim[dir][0], 3, cl);
       } else {
         cl[0] = cl[1] = cl[2] = -1;
       }
       // upper
-      if ( instance->m_nb_dim[dir][1] != MPI::PROC_NULL ) {
-        instance->m_cart.Get_coords(instance->m_nb_dim[dir][1], 3, cu);
+      if ( instance->m_nb_dim[dir][1] != MPI_PROC_NULL ) {
+        MPI_Cart_coords(instance->m_cart, instance->m_nb_dim[dir][1], 3, cu);
       } else {
         cu[0] = cu[1] = cu[2] = -1;
       }
@@ -320,13 +320,13 @@ public:
   /// begin boundary exchange with non-blocking send/recv
   static void bc_exchange_begin(void *buf0, void *buf1, void *buf2,
                                 int dsize, int count[3],
-                                MPI::Request req[12]);
+                                MPI_Request req[12]);
   /// begin directional boundary exchange with non-blocking send/recv
   static void bc_exchange_dir_begin(int dir, void *buf,
                                     int dsize, int count,
-                                    MPI::Request req[4]);
+                                    MPI_Request req[4]);
   /// wait requests
-  static void wait(MPI::Request req[], int n);
+  static void wait(MPI_Request req[], int n);
 };
 
 // Local Variables:

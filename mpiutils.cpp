@@ -17,8 +17,10 @@ int mpiutils::tag[3][2] = { {0, 1}, {2, 3}, {4, 5} };
 //
 void mpiutils::bc_exchange_begin(void *buf0, void *buf1, void *buf2,
                                  int dsize, int count[3],
-                                 MPI::Request req[12])
+                                 MPI_Request req[12])
 {
+  MPI_Comm comm = MPI_COMM_WORLD;
+
   {
     //
     // begin non-blocking send/recv in dir. 0
@@ -32,10 +34,11 @@ void mpiutils::bc_exchange_begin(void *buf0, void *buf1, void *buf2,
     p[2] = p[1] + size;
     p[3] = p[2] + size;
 
-    req[ 0] = MPI::COMM_WORLD.Isend(p[0], size, MPI::CHAR, lower, tag[0][0]);
-    req[ 1] = MPI::COMM_WORLD.Isend(p[1], size, MPI::CHAR, upper, tag[0][1]);
-    req[ 2] = MPI::COMM_WORLD.Irecv(p[2], size, MPI::CHAR, lower, tag[0][1]);
-    req[ 3] = MPI::COMM_WORLD.Irecv(p[3], size, MPI::CHAR, upper, tag[0][0]);
+
+    MPI_Isend(p[0], size, MPI_CHAR, lower, tag[0][0], comm, &req[ 0]);
+    MPI_Isend(p[1], size, MPI_CHAR, upper, tag[0][1], comm, &req[ 1]);
+    MPI_Irecv(p[2], size, MPI_CHAR, lower, tag[0][1], comm, &req[ 2]);
+    MPI_Irecv(p[3], size, MPI_CHAR, upper, tag[0][0], comm, &req[ 3]);
   }
 
   {
@@ -51,10 +54,11 @@ void mpiutils::bc_exchange_begin(void *buf0, void *buf1, void *buf2,
     p[2] = p[1] + size;
     p[3] = p[2] + size;
 
-    req[ 4] = MPI::COMM_WORLD.Isend(p[0], size, MPI::CHAR, lower, tag[1][0]);
-    req[ 5] = MPI::COMM_WORLD.Isend(p[1], size, MPI::CHAR, upper, tag[1][1]);
-    req[ 6] = MPI::COMM_WORLD.Irecv(p[2], size, MPI::CHAR, lower, tag[1][1]);
-    req[ 7] = MPI::COMM_WORLD.Irecv(p[3], size, MPI::CHAR, upper, tag[1][0]);
+
+    MPI_Isend(p[0], size, MPI_CHAR, lower, tag[1][0], comm, &req[ 4]);
+    MPI_Isend(p[1], size, MPI_CHAR, upper, tag[1][1], comm, &req[ 5]);
+    MPI_Irecv(p[2], size, MPI_CHAR, lower, tag[1][1], comm, &req[ 6]);
+    MPI_Irecv(p[3], size, MPI_CHAR, upper, tag[1][0], comm, &req[ 7]);
   }
 
   {
@@ -70,10 +74,10 @@ void mpiutils::bc_exchange_begin(void *buf0, void *buf1, void *buf2,
     p[2] = p[1] + size;
     p[3] = p[2] + size;
 
-    req[ 8] = MPI::COMM_WORLD.Isend(p[0], size, MPI::CHAR, lower, tag[2][0]);
-    req[ 9] = MPI::COMM_WORLD.Isend(p[1], size, MPI::CHAR, upper, tag[2][1]);
-    req[10] = MPI::COMM_WORLD.Irecv(p[2], size, MPI::CHAR, lower, tag[2][1]);
-    req[11] = MPI::COMM_WORLD.Irecv(p[3], size, MPI::CHAR, upper, tag[2][0]);
+    MPI_Isend(p[0], size, MPI_CHAR, lower, tag[2][0], comm, &req[ 8]);
+    MPI_Isend(p[1], size, MPI_CHAR, upper, tag[2][1], comm, &req[ 9]);
+    MPI_Irecv(p[2], size, MPI_CHAR, lower, tag[2][1], comm, &req[10]);
+    MPI_Irecv(p[3], size, MPI_CHAR, upper, tag[2][0], comm, &req[11]);
   }
 }
 
@@ -82,8 +86,10 @@ void mpiutils::bc_exchange_begin(void *buf0, void *buf1, void *buf2,
 //
 void mpiutils::bc_exchange_dir_begin(int dir, void *buf,
                                      int dsize, int count,
-                                     MPI::Request req[4])
+                                     MPI_Request req[4])
 {
+  MPI_Comm comm = MPI_COMM_WORLD;
+
   int size  = dsize*count;
   int lower = instance->m_nb_dim[dir][0];
   int upper = instance->m_nb_dim[dir][1];
@@ -93,42 +99,32 @@ void mpiutils::bc_exchange_dir_begin(int dir, void *buf,
   p[2] = p[1] + size;
   p[3] = p[2] + size;
 
-  req[0] = MPI::COMM_WORLD.Isend(p[0], size, MPI::CHAR, lower, tag[dir][0]);
-  req[1] = MPI::COMM_WORLD.Isend(p[1], size, MPI::CHAR, upper, tag[dir][1]);
-  req[2] = MPI::COMM_WORLD.Irecv(p[2], size, MPI::CHAR, lower, tag[dir][1]);
-  req[3] = MPI::COMM_WORLD.Irecv(p[3], size, MPI::CHAR, upper, tag[dir][0]);
+  MPI_Isend(p[0], size, MPI_CHAR, lower, tag[dir][0], comm, &req[0]);
+  MPI_Isend(p[1], size, MPI_CHAR, upper, tag[dir][1], comm, &req[1]);
+  MPI_Irecv(p[2], size, MPI_CHAR, lower, tag[dir][1], comm, &req[2]);
+  MPI_Irecv(p[3], size, MPI_CHAR, upper, tag[dir][0], comm, &req[3]);
 }
 
 //
-// wait MPI requests with status checking
+// wait for all MPI requests to complete
 //
-void mpiutils::wait(MPI::Request req[], int n)
+void mpiutils::wait(MPI_Request req[], int n)
 {
-  MPI::Status status[n];
-
-  MPI::Request::Waitall(n, req, status);
-
-  // check status
-  for(int i=0; i < n ;i++) {
-    if( req[i].Test(status[i]) != true ) {
-      std::cerr << tfm::format("MPI request[%2d] from rank %3d failed !\n",
-                               i, instance->m_thisrank);
-    }
-  }
+  MPI_Waitall(n, req, MPI_STATUSES_IGNORE);
 }
 
-#ifdef __DEBUG_MPIUTILS__
+#ifdef __MAIN__
 
 //
-// test code for mpiutils module
+// main program for checking mpiutils usage
 //
 int main(int argc, char **argv)
 {
-  int32 domain[3] = {4, 4, 1};
-  bool  period[3] = {1, 0, 0};
+  int domain[3] = {2, 4, 2};
+  int period[3] = {1, 0, 0};
 
   // initialize with domain decomposition
-  mpiutils::initialize(argc, argv, domain, period, false);
+  mpiutils::initialize(&argc, &argv, domain, period, true);
 
   // show info
   mpiutils::info(std::cerr);
@@ -144,7 +140,7 @@ int main(int argc, char **argv)
     const int dir = 0;
     const int N = 3;
     int buf[4*N];
-    MPI::Request req[4];
+    MPI_Request req[4];
 
     // clear buffer
     memset(buf, -1, 4*N*sizeof(int));
@@ -177,7 +173,7 @@ int main(int argc, char **argv)
     int buf0[4*N0];
     int buf1[4*N1];
     int buf2[4*N2];
-    MPI::Request req[12];
+    MPI_Request req[12];
 
     // clear buffer
     memset(buf0, -1, 4*N0*sizeof(int));
