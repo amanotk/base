@@ -19,66 +19,9 @@ void mpiutils::bc_exchange_begin(void *buf0, void *buf1, void *buf2,
                                  int dsize, int count[3],
                                  MPI_Request req[12])
 {
-  MPI_Comm comm = MPI_COMM_WORLD;
-
-  {
-    //
-    // begin non-blocking send/recv in dir. 0
-    //
-    int size  = dsize*count[0];
-    int lower = instance->m_nb_dim[0][0];
-    int upper = instance->m_nb_dim[0][1];
-    char *p[4];
-    p[0] = static_cast<char*>(buf0);
-    p[1] = p[0] + size;
-    p[2] = p[1] + size;
-    p[3] = p[2] + size;
-
-
-    MPI_Isend(p[0], size, MPI_CHAR, lower, tag[0][0], comm, &req[ 0]);
-    MPI_Isend(p[1], size, MPI_CHAR, upper, tag[0][1], comm, &req[ 1]);
-    MPI_Irecv(p[2], size, MPI_CHAR, lower, tag[0][1], comm, &req[ 2]);
-    MPI_Irecv(p[3], size, MPI_CHAR, upper, tag[0][0], comm, &req[ 3]);
-  }
-
-  {
-    //
-    // begin non-blocking send/recv in dir. 1
-    //
-    int size  = dsize*count[1];
-    int lower = instance->m_nb_dim[1][0];
-    int upper = instance->m_nb_dim[1][1];
-    char *p[4];
-    p[0] = static_cast<char*>(buf1);
-    p[1] = p[0] + size;
-    p[2] = p[1] + size;
-    p[3] = p[2] + size;
-
-
-    MPI_Isend(p[0], size, MPI_CHAR, lower, tag[1][0], comm, &req[ 4]);
-    MPI_Isend(p[1], size, MPI_CHAR, upper, tag[1][1], comm, &req[ 5]);
-    MPI_Irecv(p[2], size, MPI_CHAR, lower, tag[1][1], comm, &req[ 6]);
-    MPI_Irecv(p[3], size, MPI_CHAR, upper, tag[1][0], comm, &req[ 7]);
-  }
-
-  {
-    //
-    // begin non-blocking send/recv in dir. 2
-    //
-    int size  = dsize*count[2];
-    int lower = instance->m_nb_dim[2][0];
-    int upper = instance->m_nb_dim[2][1];
-    char *p[4];
-    p[0] = static_cast<char*>(buf2);
-    p[1] = p[0] + size;
-    p[2] = p[1] + size;
-    p[3] = p[2] + size;
-
-    MPI_Isend(p[0], size, MPI_CHAR, lower, tag[2][0], comm, &req[ 8]);
-    MPI_Isend(p[1], size, MPI_CHAR, upper, tag[2][1], comm, &req[ 9]);
-    MPI_Irecv(p[2], size, MPI_CHAR, lower, tag[2][1], comm, &req[10]);
-    MPI_Irecv(p[3], size, MPI_CHAR, upper, tag[2][0], comm, &req[11]);
-  }
+  bc_exchange_dir_begin(0, buf0, dsize, count[0], &req[4*0]);
+  bc_exchange_dir_begin(1, buf1, dsize, count[1], &req[4*1]);
+  bc_exchange_dir_begin(2, buf2, dsize, count[2], &req[4*2]);
 }
 
 //
@@ -93,16 +36,15 @@ void mpiutils::bc_exchange_dir_begin(int dir, void *buf,
   int size  = dsize*count;
   int lower = instance->m_nb_dim[dir][0];
   int upper = instance->m_nb_dim[dir][1];
-  char *p[4];
-  p[0] = static_cast<char*>(buf);
-  p[1] = p[0] + size;
-  p[2] = p[1] + size;
-  p[3] = p[2] + size;
+  char *sndbuf_l = static_cast<char*>(buf) + size * 0;
+  char *sndbuf_u = static_cast<char*>(buf) + size * 1;
+  char *rcvbuf_l = static_cast<char*>(buf) + size * 2;
+  char *rcvbuf_u = static_cast<char*>(buf) + size * 3;
 
-  MPI_Isend(p[0], size, MPI_CHAR, lower, tag[dir][0], comm, &req[0]);
-  MPI_Isend(p[1], size, MPI_CHAR, upper, tag[dir][1], comm, &req[1]);
-  MPI_Irecv(p[2], size, MPI_CHAR, lower, tag[dir][1], comm, &req[2]);
-  MPI_Irecv(p[3], size, MPI_CHAR, upper, tag[dir][0], comm, &req[3]);
+  MPI_Isend(sndbuf_l, size, MPI_BYTE, lower, tag[dir][0], comm, &req[0]);
+  MPI_Isend(sndbuf_u, size, MPI_BYTE, upper, tag[dir][1], comm, &req[1]);
+  MPI_Irecv(rcvbuf_l, size, MPI_BYTE, lower, tag[dir][1], comm, &req[2]);
+  MPI_Irecv(rcvbuf_u, size, MPI_BYTE, upper, tag[dir][0], comm, &req[3]);
 }
 
 //
