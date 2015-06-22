@@ -198,6 +198,33 @@ private:
   }
 
 public:
+  ///
+  /// MPI send/recv buffer container
+  ///
+  class Buffer
+  {
+  public:
+    int  size;
+    int  count[4];
+    char *data[4];
+    MPI_Request request[4];
+
+    Buffer(int bufsize) : size(bufsize)
+    {
+      for(int i=0; i < 4 ;i++) {
+        data[i]  = new char [size];
+        count[i] = size;
+      }
+    }
+
+    ~Buffer()
+    {
+      for(int i=0; i < 4 ;i++) {
+        delete [] data[i];
+      }
+    }
+  };
+
   /// initialize MPI call
   static mpiutils* initialize(int *argc, char*** argv,
                               int domain[3], int period[3],
@@ -317,14 +344,32 @@ public:
     out << std::endl;
   }
 
+  /// pack data; return position after pack
+  static int pack(void *data, int count, MPI_Datatype dtype,
+                  void *buf, int bufsize, int pos);
+
+  /// unpack data; return position after unpack
+  static int unpack(void *data, int count, MPI_Datatype dtype,
+                    void *buf, int bufsize, int pos);
+
   /// begin boundary exchange with non-blocking send/recv
   static void bc_exchange_begin(void *buf0, void *buf1, void *buf2,
                                 int dsize, int count[3],
                                 MPI_Request req[12]);
+
   /// begin directional boundary exchange with non-blocking send/recv
   static void bc_exchange_dir_begin(int dir, void *buf,
                                     int dsize, int count,
                                     MPI_Request req[4]);
+
+  /// begin boundary exchange with non-blocking send/recv
+  static void bc_exchange_begin(mpiutils::Buffer &buf0,
+                                mpiutils::Buffer &buf1,
+                                mpiutils::Buffer &buf2);
+
+  /// begin directional boundary exchange with non-blocking send/recv
+  static void bc_exchange_dir_begin(int dir, mpiutils::Buffer &buf);
+
   /// wait requests
   static void wait(MPI_Request req[], int n);
 };

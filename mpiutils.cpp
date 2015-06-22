@@ -13,6 +13,26 @@ mpiutils *mpiutils::instance;
 int mpiutils::tag[3][2] = { {0, 1}, {2, 3}, {4, 5} };
 
 //
+// pack data; return position after pack
+//
+int mpiutils::pack(void *data, int count, MPI_Datatype dtype,
+                   void *buf, int bufsize, int pos)
+{
+  MPI_Pack(data, count, dtype, buf, bufsize, &pos, MPI_COMM_WORLD);
+  return pos;
+}
+
+//
+// unpack data; return position after unpack
+//
+int mpiutils::unpack(void *data, int count, MPI_Datatype dtype,
+                     void *buf, int bufsize, int pos)
+{
+  MPI_Unpack(buf, bufsize, &pos, data, count, dtype, MPI_COMM_WORLD);
+  return pos;
+}
+
+//
 // begin boundary exchange
 //
 void mpiutils::bc_exchange_begin(void *buf0, void *buf1, void *buf2,
@@ -45,6 +65,37 @@ void mpiutils::bc_exchange_dir_begin(int dir, void *buf,
   MPI_Isend(sndbuf_u, size, MPI_BYTE, upper, tag[dir][1], comm, &req[1]);
   MPI_Irecv(rcvbuf_l, size, MPI_BYTE, lower, tag[dir][1], comm, &req[2]);
   MPI_Irecv(rcvbuf_u, size, MPI_BYTE, upper, tag[dir][0], comm, &req[3]);
+}
+
+//
+// begin boundary exchange
+//
+void mpiutils::bc_exchange_begin(mpiutils::Buffer &buf0,
+                                 mpiutils::Buffer &buf1,
+                                 mpiutils::Buffer &buf2)
+{
+  bc_exchange_dir_begin(0, buf0);
+  bc_exchange_dir_begin(1, buf1);
+  bc_exchange_dir_begin(2, buf2);
+}
+
+//
+// begin non-blocking directional boundary exchange
+//
+void mpiutils::bc_exchange_dir_begin(int dir, mpiutils::Buffer &buf)
+{
+  MPI_Comm comm = MPI_COMM_WORLD;
+  int lower = instance->m_nb_dim[dir][0];
+  int upper = instance->m_nb_dim[dir][1];
+
+  MPI_Isend(buf.data[0], buf.count[0], MPI_BYTE, lower, tag[dir][0],
+            comm, &buf.request[0]);
+  MPI_Isend(buf.data[1], buf.count[1], MPI_BYTE, upper, tag[dir][1],
+            comm, &buf.request[1]);
+  MPI_Irecv(buf.data[2], buf.count[2], MPI_BYTE, lower, tag[dir][1],
+            comm, &buf.request[2]);
+  MPI_Irecv(buf.data[3], buf.count[3], MPI_BYTE, upper, tag[dir][0],
+            comm, &buf.request[3]);
 }
 
 //
