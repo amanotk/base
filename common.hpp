@@ -18,7 +18,7 @@
 #include <cassert>
 #include <sys/time.h>
 #include "config.hpp"
-#include "tinyformat.h"
+#include "tinyformat.hpp"
 #ifdef HAS_BOOST
 #include "boost/format.hpp"
 #include "boost/program_options.hpp"

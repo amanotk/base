@@ -10,6 +10,7 @@
 ///
 #define MPICH_IGNORE_CXX_SEEK
 #include "common.hpp"
+#include "cmdline.hpp"
 #include <mpi.h>
 using namespace common;
 
@@ -39,6 +40,64 @@ const Datatype INTEGER8 = MPI_INTEGER8;
 //
 
 #endif
+
+/// MPI Domain Decomposition
+class MpiDomain
+{
+public:
+  int domain[3];
+
+  friend std::ostream& operator<<(std::ostream &os,
+                                  const MpiDomain &dd)
+  {
+    tfm::format(os, "MpiDomain = [%4d,%4d,%4d]",
+                dd.domain[0], dd.domain[1], dd.domain[2]);
+    return os;
+  }
+};
+
+
+/// MpiDomain object reader
+class MpiDomainReader
+{
+public:
+  MpiDomain operator()(const std::string &str){
+    MpiDomain dom;
+    std::stringstream ss(str);
+
+    bool status = true;
+
+    for(int i=0; i < 3 ;i++) {
+      std::string nstr;
+
+      if( !std::getline(ss, nstr, ',') ) {
+        status = false;
+        break;
+      }
+
+      if( nstr.empty() ) {
+        status = false;
+        break;
+      }
+
+      int n = std::atoi(nstr.c_str());
+      if( n == 0 ) {
+        status = false;
+        break;
+      }
+
+      dom.domain[i] = n;
+    }
+
+    // report error and exit
+    if( !status ) {
+      std::cerr << "failed to parse domain" << std::endl;
+      exit(-1);
+    }
+
+    return dom;
+  }
+};
 
 ///
 /// @class mpiutils mpiutils.hpp
@@ -87,9 +146,11 @@ private:
   mpiutils& operator=(const mpiutils &);
 
   /// constructor
-  mpiutils(int *argc, char*** argv,
-           int domain[3], int period[3], bool concat)
+  mpiutils(int *argc, char*** argv, int period[3], bool concat)
   {
+    int domain[3];
+    get_domain(*argc, *argv, domain);
+
     // initialize
     MPI_Init(argc, argv);
 
@@ -167,6 +228,21 @@ private:
     instance = 0;
   }
 
+  // parse command line arguments to get domain decomposition
+  void get_domain(int argc, char**argv, int domain[3])
+  {
+    cmdline::parser parser;
+
+    parser.add<MpiDomain>("domain", 'd', "MPI domain decomposition",
+                       true, MpiDomain(), MpiDomainReader());
+    parser.parse_check(argc, argv);
+
+    MpiDomain d = parser.get<MpiDomain>("domain");
+    domain[0] = d.domain[0];
+    domain[1] = d.domain[1];
+    domain[2] = d.domain[2];
+  }
+
   /// concatenate sorted stream
   void concatenate_stream(std::string &filename, std::ostream &dst,
                           const int tag, const char *label)
@@ -227,12 +303,11 @@ public:
 
   /// initialize MPI call
   static mpiutils* initialize(int *argc, char*** argv,
-                              int domain[3], int period[3],
-                              bool concat=true)
+                              int period[3], bool concat=true)
   {
     if( instance == 0 ) {
       // create instance
-      instance = new mpiutils(argc, argv, domain, period, concat);
+      instance = new mpiutils(argc, argv, period, concat);
     }
     return instance;
   }
@@ -363,16 +438,17 @@ public:
                                     MPI_Request req[4]);
 
   /// begin boundary exchange with non-blocking send/recv
-  static void bc_exchange_begin(mpiutils::Buffer &buf0,
-                                mpiutils::Buffer &buf1,
-                                mpiutils::Buffer &buf2);
+  static void bc_exchange_begin(mpiutils::Buffer *buf0,
+                                mpiutils::Buffer *buf1,
+                                mpiutils::Buffer *buf2);
 
   /// begin directional boundary exchange with non-blocking send/recv
-  static void bc_exchange_dir_begin(int dir, mpiutils::Buffer &buf);
+  static void bc_exchange_dir_begin(int dir, mpiutils::Buffer *buf);
 
   /// wait requests
   static void wait(MPI_Request req[], int n);
 };
+
 
 // Local Variables:
 // c-file-style   : "gnu"

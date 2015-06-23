@@ -70,9 +70,9 @@ void mpiutils::bc_exchange_dir_begin(int dir, void *buf,
 //
 // begin boundary exchange
 //
-void mpiutils::bc_exchange_begin(mpiutils::Buffer &buf0,
-                                 mpiutils::Buffer &buf1,
-                                 mpiutils::Buffer &buf2)
+void mpiutils::bc_exchange_begin(mpiutils::Buffer *buf0,
+                                 mpiutils::Buffer *buf1,
+                                 mpiutils::Buffer *buf2)
 {
   bc_exchange_dir_begin(0, buf0);
   bc_exchange_dir_begin(1, buf1);
@@ -82,20 +82,20 @@ void mpiutils::bc_exchange_begin(mpiutils::Buffer &buf0,
 //
 // begin non-blocking directional boundary exchange
 //
-void mpiutils::bc_exchange_dir_begin(int dir, mpiutils::Buffer &buf)
+void mpiutils::bc_exchange_dir_begin(int dir, mpiutils::Buffer *buf)
 {
   MPI_Comm comm = MPI_COMM_WORLD;
   int lower = instance->m_nb_dim[dir][0];
   int upper = instance->m_nb_dim[dir][1];
 
-  MPI_Isend(buf.data[0], buf.count[0], MPI_BYTE, lower, tag[dir][0],
-            comm, &buf.request[0]);
-  MPI_Isend(buf.data[1], buf.count[1], MPI_BYTE, upper, tag[dir][1],
-            comm, &buf.request[1]);
-  MPI_Irecv(buf.data[2], buf.count[2], MPI_BYTE, lower, tag[dir][1],
-            comm, &buf.request[2]);
-  MPI_Irecv(buf.data[3], buf.count[3], MPI_BYTE, upper, tag[dir][0],
-            comm, &buf.request[3]);
+  MPI_Isend(buf->data[0], buf->count[0], MPI_BYTE, lower, tag[dir][0],
+            comm, &buf->request[0]);
+  MPI_Isend(buf->data[1], buf->count[1], MPI_BYTE, upper, tag[dir][1],
+            comm, &buf->request[1]);
+  MPI_Irecv(buf->data[2], buf->count[2], MPI_BYTE, lower, tag[dir][1],
+            comm, &buf->request[2]);
+  MPI_Irecv(buf->data[3], buf->count[3], MPI_BYTE, upper, tag[dir][0],
+            comm, &buf->request[3]);
 }
 
 //
@@ -113,11 +113,10 @@ void mpiutils::wait(MPI_Request req[], int n)
 //
 int main(int argc, char **argv)
 {
-  int domain[3] = {2, 4, 2};
   int period[3] = {1, 0, 0};
 
   // initialize with domain decomposition
-  mpiutils::initialize(&argc, &argv, domain, period, true);
+  mpiutils::initialize(&argc, &argv, period, true);
 
   // show info
   mpiutils::info(std::cerr);
