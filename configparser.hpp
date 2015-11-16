@@ -10,6 +10,7 @@
 #include <iostream>
 #include <iomanip>
 #include <fstream>
+#include <sstream>
 #include <string>
 #include <map>
 #include <regex.h>
@@ -20,6 +21,7 @@
 class ConfigParser
 {
 private:
+  std::string m_filename;
   std::map<std::string, std::string> m_pair;
 
   // read config file and store (key, val) to pair to m_pair
@@ -99,6 +101,7 @@ public:
   // constructor: read given file
   ConfigParser(const char* filename)
   {
+    m_filename = std::string(filename);
     read_file(filename);
   }
 
@@ -130,6 +133,25 @@ public:
                 << std::setw(20) << std::left << (*it).second << std::endl;
       ++it;
     }
+  }
+
+  // return file content as string
+  std::string get_content()
+  {
+    std::ifstream     ifs(m_filename.c_str());
+    std::stringstream ss;
+
+    if( !ifs ) {
+      std::cerr << "Error: Could not open file : " << m_filename << std::endl;
+    }
+
+    // copy
+    ss << ifs.rdbuf();
+
+    // close
+    ifs.close();
+
+    return ss.str();
   }
 };
 
