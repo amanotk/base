@@ -227,7 +227,7 @@ public:
   //@{
   unsigned long rand32() { return genrand_int32(); }
   long rand31() { return genrand_int31(); }
-  double rand()  { return genrand_real1(); }
+  double rand()  { return genrand_real3(); }
   double rand1() { return genrand_real1(); }
   double rand2() { return genrand_real2(); }
   double rand3() { return genrand_real3(); }
