@@ -65,7 +65,7 @@ static struct DebugStream : std::ostream
 {
   std::filebuf buffer;
 
-  DebugStream()
+  DebugStream() : std::ostream(0)
   {
     redirect(std::cerr);
   }
