@@ -117,6 +117,15 @@ public:
     return type_cast<T>(m_pair[key]);
   }
 
+  // return if given key is available
+  bool has_key(const char* key)
+  {
+    if( m_pair.find(std::string(key)) == m_pair.end() )
+      return false;
+
+    return true;
+  }
+
   // print all (key, val) pairs
   void print()
   {
